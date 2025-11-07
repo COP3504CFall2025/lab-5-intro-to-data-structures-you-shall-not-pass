@@ -2,10 +2,16 @@
 #include <iostream>
 using namespace std;
 
-
+template <typename T>
+struct Node {
+	T data;
+	Node* prev;
+	Node* next;
+};
 
 template <typename T>
 class LinkedList {
+
 public:
 	// Behaviors
 	void printForward() const;

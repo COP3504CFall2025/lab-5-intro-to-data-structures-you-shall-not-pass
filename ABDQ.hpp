@@ -8,7 +8,7 @@
 template <typename T>
 class ABDQ : public DequeInterface<T> {
 private:
-    T* data_;                 // underlying dynamic array
+    T* data_;                 // underlying dynamic data_
     std::size_t capacity_;    // total allocated capacity
     std::size_t size_;        // number of stored elements
     std::size_t front_;       // index of front element
@@ -24,48 +24,76 @@ public:
     ABDQ(ABDQ&& other) noexcept;
     ABDQ& operator=(const ABDQ& other);
     ABDQ& operator=(ABDQ&& other) noexcept;
-    ~ABDQ() override;
+    ~ABDQ() noexcept override;
 
-    void expand()
+    void ensureCapacity()
     {
         capacity_ *= SCALE_FACTOR;
         T* temp = new T[capacity_];
-        for (int i = 0; i < size_ - 1; i++)
+        int i = 0;
+        for (i = 0; i < size_ - 1; i++)
         {
-            *(temp + i) = *((array_ + front_ + i) % (capacity_ - 1));
+            *(temp + i) = *((data_ + front_ + i) % (capacity_ - 1));
         }
-        delete[] array_;
-        array_ = temp;
+        delete[] data_;
+        data_ = temp;
         temp = nullptr;        
+        front_ = 0;
+        back_ = i;  
+    }
+
+    void shrinkIfNeeded()
+    {
+        capacity_ /= 2;
     }
 
     // Insertion
     void pushFront(const T& item) override
     {
         size_++;
+        if (size_ > capacity_)
+        {
+            ensureCapacity();
+        }
+        front_ = (front_ - 1) % capacity_;
+        *(data_ + front_) % capacity_ = item;
+    }
+    void pushBack(const T& item) override
+    {
         size_++;
         if (size_ > capacity_)
         {
-            
+            ensureCapacity();
         }
-        front_ = (front_ - 1) % capacity_;
-        if ()
-    }
-    void pushBack(const T& item) override;
-    {
-
+        back_ = (back_ + 1) % capacity_;
+        *(data_ + back_) % capacity_ = item;
     }
 
     // Deletion
-    T popFront() override;
-    T popBack() override;
+    T popFront() override
+    {
+        front_ = (front_ + 1) % capacity_;
+    }
+    T popBack() override
+    {
+        back_ = (back_ - 1) % capacity_;
+    }
 
     // Access
-    const T& front() const override;
-    const T& back() const override;
+    const T& front() const override
+    {
+        return *(data_ + front_) % capacity_;
+    }
+    const T& back() const override
+    {
+        return *(data_ + back_) % capacity_;
+    }
 
     // Getters
-    std::size_t getSize() const noexcept override;
+    [[nodiscard]] std::size_t getSize() const noexcept override
+    {
+        return size_;
+    }
 };
 
 
@@ -74,8 +102,8 @@ public:
     ABDQ<T>::ABDQ()
     {
         capacity_ = 1;
-        curr_size_ = 0;
-        array_ = new T[capacity_];
+        size_ = 0;
+        data_ = new T[capacity_];
         back_ = 0;
         front_ = 0;
     }
@@ -83,8 +111,8 @@ public:
     ABDQ<T>::ABDQ(const size_t capacity)
     {
         this->capacity_ = capacity;
-        curr_size_ = 0;
-        array_ = new T[capacity_];
+        size_ = 0;
+        data_ = new T[capacity_];
         back_ = 0;
         front_ = 0;
     }
@@ -92,14 +120,14 @@ public:
     ABDQ<T>::ABDQ(const ABDQ& other)
     {
         this->capacity_ = other.getMaxCapacity();
-        this->curr_size_ = other.getSize();
+        this->size_ = other.getSize();
         this->back_ = other.back_;
         this->front_ = other.front_;
 
-        this->array_ = new T[capacity_];
-        T* curr = other.getData(); // points to curr element to copy into new array
-        T* temp = array_; // points to curr element of the new array to copy into 
-        for (int i = 0; i < curr_size_; i++)
+        this->data_ = new T[capacity_];
+        T* curr = other.getData(); // points to curr element to copy into new data_
+        T* temp = data_; // points to curr element of the new data_ to copy into 
+        for (int i = 0; i < size_; i++)
         {
             *temp = *curr;
             curr++;
@@ -112,18 +140,18 @@ public:
         if (&rhs = this)
             return *this;
         
-        delete[] this->array_;
-        this->array = new T[capacity_];
+        delete[] this->data_;
+        this->data_ = new T[capacity_];
         
         this->capacity_ = rhs.getMaxCapacity();
-        this->curr_size_ = rhs.getSize();
-        this->back_ = rhs.back();
-        this->front_ = rhs.front();
+        this->size_ = rhs.getSize();
+        this->back_ = rhs->back_;
+        this->front_ = rhs->front_;
 
 
-        T* curr = rhs.getData(); // points to curr element to copy into new array
-        T* temp = array_; // points to curr element of the new array to copy into 
-        for (int i = 0; i < curr_size_; i++)
+        T* curr = rhs.getData(); // points to curr element to copy into new data_
+        T* temp = data_; // points to curr element of the new data_ to copy into 
+        for (int i = 0; i < size_; i++)
         {
             *temp = *curr;
             curr++;
@@ -134,16 +162,16 @@ public:
     ABDQ<T>::ABDQ(ABDQ&& other) noexcept
     {
         this->capacity_ = other.capacity_;
-        this->curr_size_ = other.curr_size_;
+        this->size_ = other.size_;
         this->back_ = other.back_;
         this->front_ = other.front_;
-        this->array_ = other.array_;
+        this->data_ = other.data_;
 
         other.capacity_ = 0;
-        other.curr_size_ = 0;
+        other.size_ = 0;
         this->front_ = nullptr;
         other.back_ = nullptr;
-        other.array_ = nullptr;
+        other.data_ = nullptr;
 
         delete other;
         other = nullptr;
@@ -152,16 +180,16 @@ public:
     ABDQ<T>& ABDQ<T>::operator=(ABDQ<T>&& rhs) noexcept
     {
         this->capacity_ = rhs.capacity_;
-        this->curr_size_ = rhs.curr_size_;
+        this->size_ = rhs.size_;
         this->front_ = rhs.front_;
         this->back_ = rhs.back_;
-        this->array_ = rhs.array_;
+        this->data_ = rhs.data_;
 
         rhs.capacity_ = 0;
-        rhs.curr_size_ = 0;
+        rhs.size_ = 0;
         this->front_ = nullptr;
         rhs.back_ = nullptr;
-        rhs.array_ = nullptr;
+        rhs.data_ = nullptr;
 
         delete rhs;
         rhs = nullptr;
@@ -170,17 +198,10 @@ public:
     ABDQ<T>::~ABDQ() noexcept 
     {
         capacity_ = 0;
-        curr_size_ = 0;
+        size_ = 0;
         
         back_ = nullptr;
 
-        delete[] array_;
-        array_ = nullptr;
-    }
-
-    // Get the number of items in the ABDQ
-    template<typename T>
-    [[nodiscard]] size_t ABDQ<T>::getSize() const noexcept
-    {
-        return curr_size_;
+        delete[] data_;
+        data_ = nullptr;
     }

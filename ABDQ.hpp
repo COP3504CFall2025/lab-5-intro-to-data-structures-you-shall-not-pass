@@ -24,7 +24,17 @@ public:
     ABDQ(ABDQ&& other) noexcept;
     ABDQ& operator=(const ABDQ& other);
     ABDQ& operator=(ABDQ&& other) noexcept;
-    ~ABDQ() noexcept override;
+    ~ABDQ() noexcept;
+
+    size_t getMaxCapacity() 
+    {
+        return capacity_;
+    }
+
+    T* getData()
+    {
+        return data_;
+    }
 
     void ensureCapacity()
     {
@@ -56,7 +66,7 @@ public:
             ensureCapacity();
         }
         front_ = (front_ - 1) % capacity_;
-        *(data_ + front_) % capacity_ = item;
+        *((data_ + front_) % capacity_) = item;
     }
     void pushBack(const T& item) override
     {
@@ -66,27 +76,31 @@ public:
             ensureCapacity();
         }
         back_ = (back_ + 1) % capacity_;
-        *(data_ + back_) % capacity_ = item;
+        *((data_ + back_) % capacity_) = item;
     }
 
     // Deletion
     T popFront() override
     {
+        T o = *(data_ + front_);
+        return o;
         front_ = (front_ + 1) % capacity_;
     }
     T popBack() override
     {
+        T o = *(data_ + back_);
         back_ = (back_ - 1) % capacity_;
+        return o;
     }
 
     // Access
     const T& front() const override
     {
-        return *(data_ + front_) % capacity_;
+        return *((data_ + front_) % capacity_);
     }
     const T& back() const override
     {
-        return *(data_ + back_) % capacity_;
+        return *((data_ + back_) % capacity_);
     }
 
     // Getters
@@ -145,8 +159,8 @@ public:
         
         this->capacity_ = rhs.getMaxCapacity();
         this->size_ = rhs.getSize();
-        this->back_ = rhs->back_;
-        this->front_ = rhs->front_;
+        this->back_ = rhs.back_;
+        this->front_ = rhs.front_;
 
 
         T* curr = rhs.getData(); // points to curr element to copy into new data_
@@ -171,7 +185,7 @@ public:
 
         other.capacity_ = 0;
         other.size_ = 0;
-        this->front_ = nullptr;
+        other.front_ = 0;
         other.back_ = 0;
         other.data_ = 0;
     }
@@ -186,7 +200,7 @@ public:
 
         rhs.capacity_ = 0;
         rhs.size_ = 0;
-        this->front_ = nullptr;
+        rhs.front_ = 0;
         rhs.back_ = 0;
         rhs.data_ = 0;
 
@@ -198,7 +212,8 @@ public:
         capacity_ = 0;
         size_ = 0;
         
-        back_ = nullptr;
+        back_ = 0;
+        front_ = 0;
 
         delete[] data_;
         data_ = nullptr;

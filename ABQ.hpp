@@ -72,7 +72,7 @@ private:
         this->array_ = new T[capacity_];
         T* curr = other.getData(); // points to curr element to copy into new array
         T* temp = array_; // points to curr element of the new array to copy into 
-        for (int i = 0; i < curr_size_; i++)
+        for (size_t i = 0; i < curr_size_; i++)
         {
             *temp = *curr;
             curr++;
@@ -94,7 +94,7 @@ private:
 
         T* curr = rhs.getData(); // points to curr element to copy into new array
         T* temp = array_; // points to curr element of the new array to copy into 
-        for (int i = 0; i < curr_size_; i++)
+        for (size_t i = 0; i < curr_size_; i++)
         {
             *temp = *curr;
             curr++;
@@ -176,7 +176,7 @@ private:
         }
         
         T* temp = new T[capacity_];
-        for (int i = 1; i < curr_size_; i++)
+        for (size_t i = 1; i < curr_size_; i++)
         {
             *(temp + i) = *(array_ + i);
         }

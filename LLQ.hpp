@@ -8,7 +8,7 @@
 template <typename T>
 class LLQ : public QueueInterface<T> {
 private:
-    LinkedList<T> list;
+    LinkedList<T>* list;
 public:
     // Constructor 
     LLQ()

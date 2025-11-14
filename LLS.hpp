@@ -8,7 +8,7 @@
 template <typename T>
 class LLS : public StackInterface<T> {
 private:
-    LinkedList<T> list;
+    LinkedList<T>* list;
 public:
     // Constructor  
     LLS()

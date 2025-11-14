@@ -13,31 +13,33 @@ public:
     // Constructor 
     LLQ()
     {
-        LinkedList<T> list = new LinkedList<T>();
+        LinkedList<T>* list = new LinkedList<T>();
     }
 
     // Insertion
     void enqueue(const T& item) override
     {
-        list.addHead(item);
+        list->addHead(item);
     }
 
     // Deletion
     T dequeue() override
     {
-        list.removeTail();
+        Node<T>* o = list->getTail();
+        list->removeTail();
+        return *o;
     }
 
     // Access
     T peek() const override
     {
-        return list.getTail();
+        return list->getTail();
     }
 
     // Getter
     std::size_t getSize() const noexcept override
     {
-        return list.getCount();
+        return list->getCount();
     }
 
 };

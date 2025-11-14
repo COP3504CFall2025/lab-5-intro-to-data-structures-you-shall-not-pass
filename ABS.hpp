@@ -98,6 +98,8 @@ private:
             curr++;
             temp++;
         }
+
+        return *this;
     }
     template<typename T>
     ABS<T>::ABS(ABS&& other) noexcept
@@ -111,9 +113,6 @@ private:
         other.curr_size_ = 0;
         other.top = nullptr;
         other.array_ = nullptr;
-
-        delete other;
-        other = nullptr;
     }
     template<typename T>
     ABS<T>& ABS<T>::operator=(ABS<T>&& rhs) noexcept
@@ -128,8 +127,7 @@ private:
         rhs.top = nullptr;
         rhs.array_ = nullptr;
 
-        delete rhs;
-        rhs = nullptr;
+        return *this;
     }
     template<typename T>
     ABS<T>::~ABS() noexcept 

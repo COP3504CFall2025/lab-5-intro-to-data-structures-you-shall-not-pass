@@ -8,7 +8,7 @@
 using std::size_t;
 
 template<typename T>
-class ABQ : public StackInterface<T> {
+class ABQ : public QueueInterface<T> {
 public:
     // Big 5 + Parameterized Constructor
     ABQ();
@@ -100,6 +100,8 @@ private:
             curr++;
             temp++;
         }
+
+        return *this;
     }
     template<typename T>
     ABQ<T>::ABQ(ABQ&& other) noexcept
@@ -113,9 +115,6 @@ private:
         other.curr_size_ = 0;
         other.top = nullptr;
         other.array_ = nullptr;
-
-        delete other;
-        other = nullptr;
     }
     template<typename T>
     ABQ<T>& ABQ<T>::operator=(ABQ<T>&& rhs) noexcept
@@ -130,8 +129,7 @@ private:
         rhs.top = nullptr;
         rhs.array_ = nullptr;
 
-        delete rhs;
-        rhs = nullptr;
+        return *this;
     }
     template<typename T>
     ABQ<T>::~ABQ() noexcept 

@@ -31,7 +31,7 @@ public:
 	// Removal
 	bool removeHead();
 	bool removeTail();
-	void Clear();
+	void clear();
 
 	// Operators
 	LinkedList<T>& operator=(LinkedList<T>&& other) noexcept;
@@ -186,13 +186,13 @@ private:
         }
     }
     template <typename T>
-	void LinkedList<T>::Clear()
+	void LinkedList<T>::clear()
     {
         if (!(count == 0 || getHead() == nullptr))
         {    
             Node<T>* curr = (*(getHead())).next;
 
-            for (int i = 1; i < count; i++)
+            for (unsigned int i = 1; i < this->getCount(); i++)
             {
                 delete curr->prev;
 				curr->prev = nullptr;
@@ -220,7 +220,7 @@ private:
     template <typename T>
 	LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& rhs)
     {
-        this->Clear();
+        this->clear();
 
         if (&rhs == this)
             return *this;
@@ -230,8 +230,8 @@ private:
         this->addHead((*currNode).data);
         currNode = (*currNode).next;
 
-        int i = 1;
-        for (; i < rhs.count; i ++)
+        unsigned int i = 1;
+        for (i = 1; i < rhs.getCount(); i ++)
         {
             this->addTail((*currNode).data);
             currNode = (*currNode).next;
@@ -278,12 +278,12 @@ private:
         this->tail = other.tail;
         this->count = other.count;
 
-        other->head = nullptr;
-        other->tail = nullptr;
-        other->count = 0;
+        other.head = nullptr;
+        other.tail = nullptr;
+        other.count = 0;
     }
     template <typename T>
 	LinkedList<T>::~LinkedList()
     {
-        this->Clear();
+        this->clear();
     }

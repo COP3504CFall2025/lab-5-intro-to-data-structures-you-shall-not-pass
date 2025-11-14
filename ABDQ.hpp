@@ -30,7 +30,7 @@ public:
     {
         capacity_ *= SCALE_FACTOR;
         T* temp = new T[capacity_];
-        int i = 0;
+        size_t i = 0;
         for (i = 0; i < size_ - 1; i++)
         {
             *(temp + i) = *((data_ + front_ + i) % (capacity_ - 1));
@@ -157,6 +157,8 @@ public:
             curr++;
             temp++;
         }
+
+        return *this;
     }
     template<typename T>
     ABDQ<T>::ABDQ(ABDQ&& other) noexcept
@@ -170,11 +172,8 @@ public:
         other.capacity_ = 0;
         other.size_ = 0;
         this->front_ = nullptr;
-        other.back_ = nullptr;
-        other.data_ = nullptr;
-
-        delete other;
-        other = nullptr;
+        other.back_ = 0;
+        other.data_ = 0;
     }
     template<typename T>
     ABDQ<T>& ABDQ<T>::operator=(ABDQ<T>&& rhs) noexcept
@@ -188,11 +187,10 @@ public:
         rhs.capacity_ = 0;
         rhs.size_ = 0;
         this->front_ = nullptr;
-        rhs.back_ = nullptr;
-        rhs.data_ = nullptr;
+        rhs.back_ = 0;
+        rhs.data_ = 0;
 
-        delete rhs;
-        rhs = nullptr;
+        return *this;
     }
     template<typename T>
     ABDQ<T>::~ABDQ() noexcept 

@@ -26,12 +26,12 @@ public:
     ABDQ& operator=(ABDQ&& other) noexcept;
     ~ABDQ() noexcept;
 
-    size_t getMaxCapacity() 
+    size_t getMaxCapacity() const
     {
         return capacity_;
     }
 
-    T* getData()
+    T* getData() const
     {
         return data_;
     }
@@ -43,7 +43,7 @@ public:
         size_t i = 0;
         for (i = 0; i < size_ - 1; i++)
         {
-            *(temp + i) = *((data_ + front_ + i) % (capacity_ - 1));
+            *(temp + i) = *(data_ + ((front_ + i) % (capacity_ / SCALE_FACTOR)));
         }
         delete[] data_;
         data_ = temp;
@@ -65,8 +65,8 @@ public:
         {
             ensureCapacity();
         }
-        front_ = (front_ - 1) % capacity_;
-        *((data_ + front_) % capacity_) = item;
+        front_ = (front_ + capacity_ - 1) % capacity_;
+        *(data_ + front_) = item;
     }
     void pushBack(const T& item) override
     {
@@ -75,16 +75,16 @@ public:
         {
             ensureCapacity();
         }
+        *(data_ + back_) = item;
         back_ = (back_ + 1) % capacity_;
-        *((data_ + back_) % capacity_) = item;
     }
 
     // Deletion
     T popFront() override
     {
         T o = *(data_ + front_);
-        return o;
         front_ = (front_ + 1) % capacity_;
+        return o;
     }
     T popBack() override
     {
@@ -96,11 +96,11 @@ public:
     // Access
     const T& front() const override
     {
-        return *((data_ + front_) % capacity_);
+        return *(data_ + front_);
     }
     const T& back() const override
     {
-        return *((data_ + back_) % capacity_);
+        return *(data_ + back_);
     }
 
     // Getters
@@ -151,7 +151,7 @@ public:
     template<typename T>
     ABDQ<T>& ABDQ<T>::operator=(const ABDQ<T>& rhs)
     {
-        if (&rhs = this)
+        if (&rhs == this)
             return *this;
         
         delete[] this->data_;

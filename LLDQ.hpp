@@ -33,27 +33,27 @@ public:
     // Core Removal Operations
     T popFront() override
     {
-        Node<T>* o = list.getHead();
-        if (o == nullptr)
+        if (list.getCount() == 0)
         {
             throw std::runtime_error("popFront() on empty LLDQ");
         }
 
+        T popped = list.getHead()->data;
+
         list.removeHead();
-        T popped = o->data;
 
         return popped;
     }
     T popBack() override
     {
-        Node<T>* o = list.getTail();
-        if (o == nullptr)
+        if (list.getCount() == 0)
         {
             throw std::runtime_error("popBack() on empty LLDQ");
         }
 
+        T popped = list.getHead()->data;
+
         list.removeTail();
-        T popped = o->data;
 
         return popped;
     }  

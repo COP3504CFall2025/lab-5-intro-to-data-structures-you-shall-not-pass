@@ -216,7 +216,7 @@ public:
     {
         if (&rhs == this) return *this;
 
-        delete[] this->data;
+        delete[] this->data_;
 
         this->capacity_ = rhs.capacity_;
         this->size_ = rhs.size_;

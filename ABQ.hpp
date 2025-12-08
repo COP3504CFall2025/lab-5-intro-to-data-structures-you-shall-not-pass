@@ -79,7 +79,7 @@ private:
         }
 
         if (curr_size_ > 0)
-            this->top = this->array_ + (this->curr_size_ - 1);
+            this->top = this->array_;
         else
             this->top = nullptr;
     }
@@ -104,7 +104,7 @@ private:
         }
 
         if (curr_size_ > 0)
-            this->top = this->array_ + (this->curr_size_ - 1);
+            this->top = this->array_;
         else
             this->top = nullptr;
 
@@ -194,9 +194,10 @@ private:
         
             delete[] array_;
             array_ = temp;
-            temp = nullptr;        
+            temp = nullptr;       
         }
         
+        /*
         T* temp = new T[capacity_];
         for (size_t i = 1; i < curr_size_; i++)
         {
@@ -210,6 +211,15 @@ private:
 
         *(array_ + 0) = data;
         top = (array_ + (curr_size_ - 1));
+        */
+
+        *(array_ + curr_size_) = data;
+        curr_size_++;
+
+        if (curr_size_ > 0)
+            this->top = this->array_;
+        else
+            this->top = nullptr;
     }
 
     template<typename T>
@@ -236,7 +246,7 @@ private:
         curr_size_--;
 
         if (curr_size_ > 0)
-            this->top = this->array_ + (this->curr_size_ - 1);
+            this->top = this->array_;
         else
             this->top = nullptr;
 

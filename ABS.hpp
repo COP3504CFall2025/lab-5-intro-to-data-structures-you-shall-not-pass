@@ -154,7 +154,7 @@ private:
     template<typename T>
     void ABS<T>::shrinkIfNeeded()
     {
-        const size_t shrink_capacity_ = capacity_ / (scale_factor_ * scale_factor_);
+        const size_t shrink_capacity_ = capacity_ / (scale_factor_);
 
         if (curr_size_ > 0 && curr_size_ <= shrink_capacity_ && capacity_ > 1)
         {
@@ -169,7 +169,10 @@ private:
                 delete[] array_;
                 array_ = temp;
 
-                top = (array_ + (curr_size_ - 1));
+                if (curr_size_ > 0)
+                    top = (array_ + (curr_size_ - 1));
+                else
+                    top = array_;
         }
     }
 
@@ -233,12 +236,12 @@ private:
         T o = this->peek();
         curr_size_--;
 
+        shrinkIfNeeded();
+
         if (curr_size_ > 0)
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = array_;
-
-        shrinkIfNeeded();
 
         return o;
     }

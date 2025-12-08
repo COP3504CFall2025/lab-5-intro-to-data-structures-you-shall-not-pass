@@ -84,7 +84,7 @@ private:
             return *this;
         
         delete[] this->array_;
-        this->array = new T[capacity_];
+        this->array_ = new T[capacity_];
         
         this->capacity_ = rhs.getMaxCapacity();
         this->curr_size_ = rhs.getSize();
@@ -209,7 +209,7 @@ private:
         T o = this->peek();
         curr_size_--;
 
-        if (curr_size > 0)
+        if (curr_size_ > 0)
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = array_;

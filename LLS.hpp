@@ -29,7 +29,7 @@ public:
 
         T o = list.getTail()->data;
         list.removeTail();
-        return *o;
+        return o;
     }
 
     // Access
@@ -38,7 +38,7 @@ public:
         if (list.getCount() == 0)
             throw std::runtime_error("Cannot peek an empty stack");
 
-        return list.getTail();
+        return list.getTail->data();
     }
 
     //Getters

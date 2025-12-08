@@ -78,7 +78,7 @@ private:
             temp++;
         }
 
-        if (curr_size > 0)
+        if (curr_size_ > 0)
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = nullptr;
@@ -103,7 +103,7 @@ private:
             temp++;
         }
 
-        if (curr_size > 0)
+        if (curr_size_ > 0)
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = nullptr;
@@ -129,7 +129,7 @@ private:
         if (&rhs == this)
             return *this;
 
-        delete[] this->array;
+        delete[] this->array_;
 
         this->capacity_ = rhs.capacity_;
         this->curr_size_ = rhs.curr_size_;
@@ -182,12 +182,12 @@ private:
     {
         if (curr_size_ == capacity_)
         {
-            capacity_ *= SCALE_FACTOR;
+            capacity_ *= scale_factor_;
             T* temp = new T[capacity_];
 
             size_t i = 0;
 
-            for (i = 0; i < size_; i++)
+            for (i = 0; i < curr_size_; i++)
             {
                 *(temp + i) = *(array_ + i);
             }
@@ -235,7 +235,7 @@ private:
 
         curr_size_--;
 
-        if (curr_size > 0)
+        if (curr_size_ > 0)
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = nullptr;

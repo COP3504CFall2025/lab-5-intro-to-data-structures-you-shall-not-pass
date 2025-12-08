@@ -111,7 +111,7 @@ public:
         back_ = (back_ + capacity_ - 1) % capacity_;
         T o = *(data_ + back_);
 
-        size--;
+        size_--;
 
         return o;
     }

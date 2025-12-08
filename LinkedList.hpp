@@ -150,7 +150,7 @@ private:
         {
 			Node<T>* prevHead = head;
             Node<T>* newHead = head->next;
-            this->head = newHEad;
+            this->head = newHead;
 
             if (newHead == nullptr)
                 this->tail = nullptr;
@@ -267,7 +267,7 @@ private:
         this->tail = nullptr;
         this->count = 0;
 
-        if (rhs.getCount() == 0)
+        if (list.getCount() == 0)
             return;
 
         const Node<T>* currNode = list.getHead();
@@ -275,7 +275,7 @@ private:
         this->addHead((*currNode).data);
         currNode = (*currNode).next;
 
-        int i = 1;
+        unsigned int i = 1;
         for (; i < list.count; i++)
         {
             this->addTail((*currNode).data);

@@ -38,15 +38,21 @@ public:
 
     void ensureCapacity()
     {
-        capacity_ *= SCALE_FACTOR;
-        T* temp = new T[capacity_];
+        std::size_t newCapacity = capacity_ * SCALE_FACTOR;
+        T* temp = new T[newCapacity];
+
         size_t i = 0;
-        for (i = 0; i < size_ - 1; i++)
+
+        for (i = 0; i < size_; i++)
         {
-            *(temp + i) = *(data_ + ((front_ + i) % (capacity_ / SCALE_FACTOR)));
+            *(temp + i) = *(data_ + ((front_ + i) % (capacity_)));
         }
+        
         delete[] data_;
         data_ = temp;
+
+        capacity_ = newCapacity;
+
         temp = nullptr;        
         front_ = 0;
         back_ = i;  
@@ -60,47 +66,68 @@ public:
     // Insertion
     void pushFront(const T& item) override
     {
-        size_++;
-        if (size_ > capacity_)
+        if (size_ == capacity_)
         {
             ensureCapacity();
         }
+
         front_ = (front_ + capacity_ - 1) % capacity_;
         *(data_ + front_) = item;
+        size_++;
     }
     void pushBack(const T& item) override
     {
-        size_++;
-        if (size_ > capacity_)
+        if (size_ == capacity_)
         {
             ensureCapacity();
         }
         *(data_ + back_) = item;
         back_ = (back_ + 1) % capacity_;
+        size_++;
     }
 
     // Deletion
     T popFront() override
     {
+        if (size_ == 0)
+        {
+            throw std::runtime_error("PopFront on Empty Deque");
+        }
+
         T o = *(data_ + front_);
         front_ = (front_ + 1) % capacity_;
+
+        size_--;
+
         return o;
     }
     T popBack() override
     {
+        if (size_ == 0)
+        {
+            throw std::runtime_error("PopBack on Empty Deque");
+        }
+
+        back_ = (back_ + capacity_ - 1) % capacity_;
         T o = *(data_ + back_);
-        back_ = (back_ - 1) % capacity_;
+
+        size--;
+
         return o;
     }
 
     // Access
     const T& front() const override
     {
+        if (size_ == 0)
+            throw std::runtime_error("front() on empty deque");
         return *(data_ + front_);
     }
     const T& back() const override
     {
-        return *(data_ + back_);
+        if (size_ == 0)
+            throw std::runtime_error("back() on empty deque");
+        return *(data_ + ((back_ + capacity_ - 1) % capacity_));
     }
 
     // Getters
@@ -135,18 +162,16 @@ public:
     {
         this->capacity_ = other.getMaxCapacity();
         this->size_ = other.getSize();
-        this->back_ = other.back_;
-        this->front_ = other.front_;
 
         this->data_ = new T[capacity_];
-        T* curr = other.getData(); // points to curr element to copy into new data_
-        T* temp = data_; // points to curr element of the new data_ to copy into 
-        for (int i = 0; i < size_; i++)
+        
+        for (size_t i = 0; i < size_; i++)
         {
-            *temp = *curr;
-            curr++;
-            temp++;
+            *(data_ + i) = *(other.data_ + ((other.front_ + i) % other.capacity_));
         }
+
+        this->front_ = 0;
+        this->back_ = size_;
     }
     template<typename T>
     ABDQ<T>& ABDQ<T>::operator=(const ABDQ<T>& rhs)
@@ -155,22 +180,19 @@ public:
             return *this;
         
         delete[] this->data_;
-        this->data_ = new T[capacity_];
-        
+
         this->capacity_ = rhs.getMaxCapacity();
         this->size_ = rhs.getSize();
-        this->back_ = rhs.back_;
-        this->front_ = rhs.front_;
 
+        this->data_ = new T[capacity_];
 
-        T* curr = rhs.getData(); // points to curr element to copy into new data_
-        T* temp = data_; // points to curr element of the new data_ to copy into 
-        for (int i = 0; i < size_; i++)
+        for (size_t i = 0; i < size_; i++)
         {
-            *temp = *curr;
-            curr++;
-            temp++;
+            *(data_ + i) = *(rhs.data_ + ((rhs.front_ + i) % rhs.capacity_));
         }
+
+        this->back_ = size_;
+        this->front_ = 0;
 
         return *this;
     }
@@ -187,11 +209,13 @@ public:
         other.size_ = 0;
         other.front_ = 0;
         other.back_ = 0;
-        other.data_ = 0;
+        other.data_ = nullptr;
     }
     template<typename T>
     ABDQ<T>& ABDQ<T>::operator=(ABDQ<T>&& rhs) noexcept
     {
+        if (&rhs == this) return *this;
+
         this->capacity_ = rhs.capacity_;
         this->size_ = rhs.size_;
         this->front_ = rhs.front_;
@@ -202,7 +226,7 @@ public:
         rhs.size_ = 0;
         rhs.front_ = 0;
         rhs.back_ = 0;
-        rhs.data_ = 0;
+        rhs.data_ = nullptr;
 
         return *this;
     }

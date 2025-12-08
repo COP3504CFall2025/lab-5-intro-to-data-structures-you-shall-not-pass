@@ -42,8 +42,6 @@ public:
         list.removeHead();
         T popped = o->data;
 
-        delete o;
-
         return popped;
     }
     T popBack() override
@@ -56,8 +54,6 @@ public:
 
         list.removeTail();
         T popped = o->data;
-
-        delete o;
 
         return popped;
     }  

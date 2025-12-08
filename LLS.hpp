@@ -38,7 +38,7 @@ public:
         if (list.getCount() == 0)
             throw std::runtime_error("Cannot peek an empty stack");
 
-        return list.getTail->data();
+        return list.getTail()->data;
     }
 
     //Getters

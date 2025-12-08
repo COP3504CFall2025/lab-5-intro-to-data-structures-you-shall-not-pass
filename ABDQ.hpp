@@ -216,6 +216,8 @@ public:
     {
         if (&rhs == this) return *this;
 
+        delete[] this->data;
+
         this->capacity_ = rhs.capacity_;
         this->size_ = rhs.size_;
         this->front_ = rhs.front_;
@@ -233,12 +235,5 @@ public:
     template<typename T>
     ABDQ<T>::~ABDQ() noexcept 
     {
-        capacity_ = 0;
-        size_ = 0;
-        
-        back_ = 0;
-        front_ = 0;
-
         delete[] data_;
-        data_ = nullptr;
     }

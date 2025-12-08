@@ -41,6 +41,8 @@ private:
     T* top;
     T* array_;
     static constexpr size_t scale_factor_ = 2;
+
+    void shrinkIfNeeded();
 };
 
     // Big 5 + Parameterized Constructor
@@ -149,6 +151,28 @@ private:
         array_ = nullptr;
     }
 
+    template<typename T>
+    void ABS<T>::shrinkIfNeeded()
+    {
+        const size_t shrink_capacity_ = capacity_ / (scale_factor_ * scale_factor_);
+
+        if (curr_size_ > 0 && curr_size_ <= shrink_capacity_ && capacity_ > 1)
+        {
+                capacity_ /= scale_factor_;
+                T* temp = new T[capacity_];
+
+                for (size_t i = 0; i < curr_size_; i++)
+                {
+                    *(temp + i) = *(array_ + i);
+                }
+
+                delete[] array_;
+                array_ = temp;
+
+                top = (array_ + (curr_size_ - 1));
+        }
+    }
+
     // Get the number of items in the ABS
     template<typename T>
     [[nodiscard]] size_t ABS<T>::getSize() const noexcept
@@ -213,6 +237,8 @@ private:
             this->top = this->array_ + (this->curr_size_ - 1);
         else
             this->top = array_;
+
+        shrinkIfNeeded();
 
         return o;
     }

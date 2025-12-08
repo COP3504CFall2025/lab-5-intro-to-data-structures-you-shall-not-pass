@@ -32,7 +32,7 @@ public:
     void enqueue(const T& data) override;
 
     // Access
-    T peek() const override;
+    T peek() const override; 
 
     // Deletion
     T dequeue() override;
@@ -40,8 +40,8 @@ public:
 private:
     size_t capacity_;
     size_t curr_size_;
-    T* top;
     T* array_;
+    T* top;
     static constexpr size_t scale_factor_ = 2;
 };
 
@@ -52,7 +52,7 @@ private:
         capacity_ = 1;
         curr_size_ = 0;
         array_ = new T[capacity_];
-        top = array_;
+        top = nullptr;
     }
     template<typename T>
     ABQ<T>::ABQ(const size_t capacity)
@@ -60,14 +60,13 @@ private:
         this->capacity_ = capacity;
         curr_size_ = 0;
         array_ = new T[capacity_];
-        top = array_;
+        top = nullptr;
     }
     template<typename T>
     ABQ<T>::ABQ(const ABQ& other)
     {
         this->capacity_ = other.getMaxCapacity();
         this->curr_size_ = other.getSize();
-        this->top = other.top;
 
         this->array_ = new T[capacity_];
         T* curr = other.getData(); // points to curr element to copy into new array
@@ -78,19 +77,22 @@ private:
             curr++;
             temp++;
         }
+
+        if (curr_size > 0)
+            this->top = this->array_ + (this->curr_size_ - 1);
+        else
+            this->top = nullptr;
     }
     template<typename T>
     ABQ<T>& ABQ<T>::operator=(const ABQ<T>& rhs)
     {
-        if (&rhs = this)
+        if (&rhs == this)
             return *this;
         
         delete[] this->array_;
-        this->array = new T[capacity_];
-        
         this->capacity_ = rhs.getMaxCapacity();
         this->curr_size_ = rhs.getSize();
-        this->top = rhs.peek();
+        this->array = new T[capacity_];
 
         T* curr = rhs.getData(); // points to curr element to copy into new array
         T* temp = array_; // points to curr element of the new array to copy into 
@@ -100,6 +102,11 @@ private:
             curr++;
             temp++;
         }
+
+        if (curr_size > 0)
+            this->top = this->array_ + (this->curr_size_ - 1);
+        else
+            this->top = nullptr;
 
         return *this;
     }
@@ -119,6 +126,11 @@ private:
     template<typename T>
     ABQ<T>& ABQ<T>::operator=(ABQ<T>&& rhs) noexcept
     {
+        if (&rhs == this)
+            return *this;
+
+        delete[] this->array;
+
         this->capacity_ = rhs.capacity_;
         this->curr_size_ = rhs.curr_size_;
         this->top = rhs.top;
@@ -168,23 +180,35 @@ private:
     template<typename T>
     void ABQ<T>::enqueue(const T& data) 
     {
-        curr_size_++;
-        if (curr_size_ > capacity_)
+        if (curr_size_ == capacity_)
         {
-            capacity_ *= scale_factor_;
-            
+            capacity_ *= SCALE_FACTOR;
+            T* temp = new T[capacity_];
+
+            size_t i = 0;
+
+            for (i = 0; i < size_; i++)
+            {
+                *(temp + i) = *(array_ + i);
+            }
+        
+            delete[] array_;
+            array_ = temp;
+            temp = nullptr;        
         }
         
         T* temp = new T[capacity_];
         for (size_t i = 1; i < curr_size_; i++)
         {
-            *(temp + i) = *(array_ + i);
+            *(temp + i) = *(array_ + (i - 1));
         }
         delete[] array_;
         array_ = temp;
         temp = nullptr;
         
-        *(array_) = data;
+        curr_size_++;
+
+        *(array_ + 0) = data;
         top = (array_ + (curr_size_ - 1));
     }
 
@@ -192,21 +216,29 @@ private:
     T ABQ<T>::peek() const 
     {
         if (curr_size_ == 0)
-            throw;
+            throw std::runtime_error("Cannot peek on empty queue");
         return *top;
     }
 
     template<typename T>
     T ABQ<T>::dequeue() 
     {
+        if (curr_size_ == 0)
+            throw std::runtime_error("Cannot dequeue from an empty queue");
+
         T o = this->peek();
 
-        if (curr_size_ == 0)
-            throw;
+        for (size_t i = 1; i < curr_size_; i++)
+        {
+            *(array_ + (i - 1)) = *(array_ + i);
+        }
 
         curr_size_--;
 
-        top = (array_ + (curr_size_ - 1));
+        if (curr_size > 0)
+            this->top = this->array_ + (this->curr_size_ - 1);
+        else
+            this->top = nullptr;
 
         return o;
     }

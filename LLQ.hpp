@@ -24,15 +24,21 @@ public:
     // Deletion
     T dequeue() override
     {
-        Node<T>* o = list.getTail();
+        if (list.getCount() == 0)
+            throw std::runtime_error("Cannot dequeue from an empty queue.");
+
+        T o = list.getTail()->data;
         list.removeTail();
-        return *o;
+        return o;
     }
 
     // Access
     T peek() const override
     {
-        return list.getTail();
+        if (list.getCount() == 0)
+            throw std::runtime_error("Cannot peek into an empty queue.");
+
+        return list.getTail()->data;
     }
 
     // Getter

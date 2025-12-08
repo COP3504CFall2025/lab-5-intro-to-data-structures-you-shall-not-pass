@@ -17,6 +17,7 @@ public:
     // Constructor
     LLDQ()
     {
+        
     }
 
     // Core Insertion Operations
@@ -33,24 +34,42 @@ public:
     T popFront() override
     {
         Node<T>* o = list.getHead();
+        if (o == nullptr)
+        {
+            throw std::runtime_error("popFront() on empty LLDQ");
+        }
+
         list.removeHead();
-        return (*o.data);
+        T popped = o->data;
+
+        delete o;
+
+        return popped;
     }
     T popBack() override
     {
         Node<T>* o = list.getTail();
+        if (o == nullptr)
+        {
+            throw std::runtime_error("popBack() on empty LLDQ");
+        }
+
         list.removeTail();
-        return (*o.data);
+        T popped = o->data;
+
+        delete o;
+
+        return popped;
     }  
 
     // Element Accessors
     const T& front() const override
     {
-        return list.getHead();
+        return list.getHead()->data;
     }
     const T& back() const override
     {
-        return list.getTail();
+        return list.getTail()->data;
     }
 
     // Getter

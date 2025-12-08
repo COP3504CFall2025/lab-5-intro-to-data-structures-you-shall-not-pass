@@ -91,7 +91,7 @@ public:
     {
         if (size_ == 0)
         {
-            throw std::runtime_error("PopFront on Empty Deque");
+            throw std::runtime_error("popFront() on empty deque");
         }
 
         T o = *(data_ + front_);
@@ -105,7 +105,7 @@ public:
     {
         if (size_ == 0)
         {
-            throw std::runtime_error("PopBack on Empty Deque");
+            throw std::runtime_error("popBack() on empty deque");
         }
 
         back_ = (back_ + capacity_ - 1) % capacity_;

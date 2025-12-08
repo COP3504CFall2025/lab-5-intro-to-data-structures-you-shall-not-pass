@@ -80,7 +80,7 @@ private:
     template<typename T>
     ABS<T>& ABS<T>::operator=(const ABS<T>& rhs)
     {
-        if (&rhs = this)
+        if (&rhs == this)
             return *this;
         
         delete[] this->array_;
@@ -88,7 +88,6 @@ private:
         
         this->capacity_ = rhs.getMaxCapacity();
         this->curr_size_ = rhs.getSize();
-        this->top = rhs.peek();
 
         T* curr = rhs.getData(); // points to curr element to copy into new array
         T* temp = array_; // points to curr element of the new array to copy into 
@@ -98,6 +97,11 @@ private:
             curr++;
             temp++;
         }
+
+        if (curr_size_ > 0)
+            this->top = array_ + (curr_size_ - 1);
+        else
+            this->top = array_;
 
         return *this;
     }
@@ -117,6 +121,10 @@ private:
     template<typename T>
     ABS<T>& ABS<T>::operator=(ABS<T>&& rhs) noexcept
     {
+        if (this == &rhs) return *this;
+
+        delete[] this->array_;
+
         this->capacity_ = rhs.capacity_;
         this->curr_size_ = rhs.curr_size_;
         this->top = rhs.top;
@@ -188,21 +196,23 @@ private:
     T ABS<T>::peek() const 
     {
         if (curr_size_ == 0)
-            throw;
+            throw std::runtime_error("Cannot peek an empty stack");;
         return *top;
     }
 
     template<typename T>
     T ABS<T>::pop() 
     {
-        T o = this->peek();
-
         if (curr_size_ == 0)
-            throw;
-
+            throw std::runtime_error("Cannot pop from an empty stack");;
+        
+        T o = this->peek();
         curr_size_--;
 
-        top = (array_ + (curr_size_ - 1));
+        if (curr_size > 0)
+            this->top = this->array_ + (this->curr_size_ - 1);
+        else
+            this->top = array_;
 
         return o;
     }

@@ -148,16 +148,20 @@ private:
     {
         if (!(count == 0 || getHead() == nullptr))
         {
-			this->count--;
-            Node<T>* currHead = getHead();
-            Node<T>* newHead = (*currHead).next;
-			this->head = newHead;
-            if ((*newHead).prev != nullptr)
-			{
-                delete (*newHead).prev;
-                (*newHead).prev = nullptr;
-			}
-			return true;
+			Node<T>* prevHead = head;
+            Node<T>* newHead = head->next;
+            this->head = newHEad;
+
+            if (newHead == nullptr)
+                this->tail = nullptr;
+            else  
+                newHead->prev = nullptr;
+            
+            delete prevHead;
+
+            this->count--;
+
+            return true;
         }
 		else
 		{
@@ -167,35 +171,38 @@ private:
     template <typename T>
 	bool LinkedList<T>::removeTail()
     {
-        if (count == 0 || getTail() == nullptr)
+        if (!(count == 0 || getHead() == nullptr))
         {
-			return false;
-        }
-        else
-        {
+			Node<T>* pastTail = tail;
+            Node<T>* newTail = tail->prev;
+            this->tail = newTail;
+
+            if (newTail == nullptr)
+                this->head = nullptr;
+            else  
+                newTail->next = nullptr;
+            
+            delete pastTail;
+
             this->count--;
-            Node<T>* currTail = getTail();
-            Node<T>* newTail = (*currTail).prev;
-			this->tail = newTail;
-            if ((*newTail).next != nullptr)
-			{
-                delete (*newTail).next;
-                (*newTail).next = nullptr;
-			}
-			return true;
+
+            return true;
         }
+		else
+		{
+			return false;
+		}
     }
     template <typename T>
 	void LinkedList<T>::clear()
     {
         if (!(count == 0 || getHead() == nullptr))
         {    
-            Node<T>* curr = (*(getHead())).next;
-
-            for (unsigned int i = 1; i < this->getCount(); i++)
+            for (Node<T>* curr = head; curr != nullptr;)
             {
-                delete curr->prev;
-				curr->prev = nullptr;
+                Node<T>* tempNext = curr->next;
+                delete curr;
+				curr = tempNext;
             }
             this->count = 0;
             this->head = nullptr;
@@ -220,9 +227,12 @@ private:
     template <typename T>
 	LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& rhs)
     {
+        if (&rhs == this)
+            return *this;
+
         this->clear();
 
-        if (&rhs == this)
+        if (rhs.getCount() == 0)
             return *this;
             
         const Node<T>* currNode = rhs.getHead();
@@ -256,6 +266,9 @@ private:
         this->head = nullptr;
         this->tail = nullptr;
         this->count = 0;
+
+        if (rhs.getCount() == 0)
+            return;
 
         const Node<T>* currNode = list.getHead();
 

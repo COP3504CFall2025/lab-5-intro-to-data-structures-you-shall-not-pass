@@ -24,7 +24,10 @@ public:
     // Deletion
     T pop() override
     {
-        Node<T>* o = list.getTail();
+        if (list.getCount() == 0)
+            throw std::runtime_error("Cannot pop an empty stack");
+
+        T o = list.getTail()->data;
         list.removeTail();
         return *o;
     }
@@ -32,6 +35,9 @@ public:
     // Access
     T peek() const override
     {
+        if (list.getCount() == 0)
+            throw std::runtime_error("Cannot peek an empty stack");
+
         return list.getTail();
     }
 

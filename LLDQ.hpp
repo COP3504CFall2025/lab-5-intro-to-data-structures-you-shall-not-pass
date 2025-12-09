@@ -34,9 +34,7 @@ public:
     T popFront() override
     {
         if (list.getCount() == 0)
-        {
             throw std::runtime_error("popFront() on empty LLDQ");
-        }
 
         T popped = list.getHead()->data;
 
@@ -47,9 +45,7 @@ public:
     T popBack() override
     {
         if (list.getCount() == 0)
-        {
             throw std::runtime_error("popBack() on empty LLDQ");
-        }
 
         T popped = list.getHead()->data;
 
@@ -61,10 +57,16 @@ public:
     // Element Accessors
     const T& front() const override
     {
+        if (list.getCount() == 0)
+            throw std::runtime_error("front() on empty LLDQ");
+
         return list.getHead()->data;
     }
     const T& back() const override
     {
+        if (list.getCount() == 0)
+            throw std::runtime_error("back() on empty LLDQ");
+
         return list.getTail()->data;
     }
 

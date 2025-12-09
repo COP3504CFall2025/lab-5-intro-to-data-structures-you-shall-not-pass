@@ -51,8 +51,8 @@ private:
     void ABQ<T>::shrinkIfNeeded()
     {
         const size_t shrink_capacity_ = capacity_ / (scale_factor_ * scale_factor_);
-
-        if (curr_size_ > 0 && curr_size_ <= shrink_capacity_ && capacity_ > 1)
+        
+        if (curr_size_ <= shrink_capacity_ && capacity_ > 1)
         {
                 capacity_ /= scale_factor_;
                 T* temp = new T[capacity_];
@@ -64,11 +64,12 @@ private:
 
                 delete[] array_;
                 array_ = temp;
+                temp = nullptr;
 
                 if (curr_size_ > 0)
                     top = (array_ + (curr_size_ - 1));
                 else
-                    top = array_;
+                    top = nullptr;
         }
     }
 

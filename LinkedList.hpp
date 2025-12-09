@@ -195,19 +195,19 @@ private:
     }
     template <typename T>
 	void LinkedList<T>::clear()
-    {
-        if (!(count == 0 || getHead() == nullptr))
-        {    
-            for (Node<T>* curr = head; curr != nullptr;)
-            {
-                Node<T>* tempNext = curr->next;
-                delete curr;
-				curr = tempNext;
-            }
-            this->count = 0;
-            this->head = nullptr;
-            this->tail = nullptr;
+    {   
+        Node<T>* curr = this->head;
+
+        while (curr != nullptr)
+        {
+            Node<T>* tempNext = curr->next;
+            delete curr;
+		    curr = tempNext;
         }
+        
+        this->count = 0;
+        this->head = nullptr;
+        this->tail = nullptr;
     }
 
 	// Operators

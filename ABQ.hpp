@@ -120,7 +120,7 @@ private:
         delete[] this->array_;
         this->capacity_ = rhs.getMaxCapacity();
         this->curr_size_ = rhs.getSize();
-        this->array = new T[capacity_];
+        this->array_ = new T[capacity_];
 
         T* curr = rhs.getData(); // points to curr element to copy into new array
         T* temp = array_; // points to curr element of the new array to copy into 

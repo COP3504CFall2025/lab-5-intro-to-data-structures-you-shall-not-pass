@@ -204,7 +204,7 @@ private:
             delete curr;
 		    curr = tempNext;
         }
-        
+
         this->count = 0;
         this->head = nullptr;
         this->tail = nullptr;
@@ -214,6 +214,10 @@ private:
     template <typename T>
 	LinkedList<T>& LinkedList<T>::operator=(LinkedList<T>&& other) noexcept
     {
+        if (this == &other) return *this;
+
+        this->clear();
+
         this->head = other.head;
         this->tail = other.tail;
         this->count = other.count;

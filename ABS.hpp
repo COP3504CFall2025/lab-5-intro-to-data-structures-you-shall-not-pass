@@ -154,7 +154,7 @@ private:
     template<typename T>
     void ABS<T>::shrinkIfNeeded()
     {
-        const size_t shrink_capacity_ = capacity_ / (scale_factor_);
+        const size_t shrink_capacity_ = capacity_ / (scale_factor_ * scale_factor_);
 
         if (curr_size_ > 0 && curr_size_ <= shrink_capacity_ && capacity_ > 1)
         {

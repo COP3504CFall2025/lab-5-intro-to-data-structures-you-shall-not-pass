@@ -60,7 +60,25 @@ public:
 
     void shrinkIfNeeded()
     {
-        capacity_ /= 2;
+        const std::size_t SHRINK_FACTOR = capacity_ / (SCALE_FACTOR * SCALE_FACTOR);
+
+        if (size_ > 0 && size_ <= SHRINK_FACTOR && capacity_ > 1)
+        {
+            capacity_ /= SCALE_FACTOR;
+            T*temp = new T[capacity_];
+
+            for (std::size_t i = 0; i < size_; i++)
+            {
+                *(temp + i) = *(data_ + ((front_ + i) % (capacity_ * SCALE_FACTOR)));
+            }
+
+            delete[] data_;
+            data_ = temp;
+            temp = nullptr;
+
+            front_ = 0;
+            back_ = size_;
+        }
     }
 
     // Insertion
@@ -99,6 +117,8 @@ public:
 
         size_--;
 
+        shrinkIfNeeded();
+
         return o;
     }
     T popBack() override
@@ -112,6 +132,8 @@ public:
         T o = *(data_ + back_);
 
         size_--;
+
+        shrinkIfNeeded();
 
         return o;
     }

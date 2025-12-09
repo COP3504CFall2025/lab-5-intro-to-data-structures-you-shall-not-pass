@@ -43,7 +43,34 @@ private:
     T* array_;
     T* top;
     static constexpr size_t scale_factor_ = 2;
+
+    void shrinkIfNeeded();
 };
+
+    template<typename T>
+    void ABQ<T>::shrinkIfNeeded()
+    {
+        const size_t shrink_capacity_ = capacity_ / (scale_factor_ * scale_factor_);
+
+        if (curr_size_ > 0 && curr_size_ <= shrink_capacity_ && capacity_ > 1)
+        {
+                capacity_ /= scale_factor_;
+                T* temp = new T[capacity_];
+
+                for (size_t i = 0; i < curr_size_; i++)
+                {
+                    *(temp + i) = *(array_ + i);
+                }
+
+                delete[] array_;
+                array_ = temp;
+
+                if (curr_size_ > 0)
+                    top = (array_ + (curr_size_ - 1));
+                else
+                    top = array_;
+        }
+    }
 
     // Big 5 + Parameterized Constructor
     template<typename T>
@@ -244,6 +271,8 @@ private:
         }
 
         curr_size_--;
+
+        shrinkIfNeeded();
 
         if (curr_size_ > 0)
             this->top = this->array_;

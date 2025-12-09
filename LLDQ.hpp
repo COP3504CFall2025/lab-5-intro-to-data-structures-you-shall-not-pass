@@ -47,7 +47,7 @@ public:
         if (list.getCount() == 0)
             throw std::runtime_error("popBack() on empty LLDQ");
 
-        T popped = list.getHead()->data;
+        T popped = list.getTail()->data;
 
         list.removeTail();
 

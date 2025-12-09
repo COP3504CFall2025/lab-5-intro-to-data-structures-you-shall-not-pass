@@ -247,8 +247,6 @@ private:
             currNode = (*currNode).next;
         }
 
-        this->count = i;
-
         return *this;
     }
 
@@ -281,8 +279,6 @@ private:
             this->addTail((*currNode).data);
             currNode = (*currNode).next;
         }
-
-        this->count = i;
     }
     template <typename T>
 	LinkedList<T>::LinkedList(LinkedList<T>&& other) noexcept
